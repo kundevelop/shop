@@ -38,8 +38,8 @@
 			%>	
 				
 		</div>
-        <div>아이디:&nbsp;&nbsp;&nbsp;<input type="text" name="empId"></div> <br>
-        <div>비밀번호:<input type="text" name="empPw"></div>
+        <div>아이디:<input type="text" name="empId"></div> <br>
+        <div>비밀번호:<input type="password" name="empPw"></div>
         <button type="submit">로그인</button>
         
         
