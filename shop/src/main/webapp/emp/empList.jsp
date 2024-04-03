@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
+<%@ page import = "java.net.*" %>
 <%@ page import="java.util.*"%>
 
 
@@ -92,11 +93,56 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+        <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap');
+    </style>
+    <style>
+        .container{
+            font-family:"Grandiflora One", cursive;
+            font-weight: bold;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+    
+        .main{
+            text-align: center;
+        }
+        
+        .table{
+            text-align: center;
+            width: 700px;
+            margin-left: 80px;
+        }
+        
+        a{
+            text-decoration: none;
+        }
+        
+        a.page-link{
+            color: #000000;
+        }
+        
+        a.page-link:hover{
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+    </style>
+
 </head>
 <body>
+    <!-- empMenu.jsp include : 주체(서버) vs redirect(주체:클라이언트) -->
+    <!-- 주체가 서버이기 include 할때는 절대주소가 /shop/...시작하지 않는다 -->
+    <jsp:include page="/emp/inc/empMenu.jsp"></jsp:include>
 	<div><a href="/shop/emp/empLogout.jsp">로그아웃</a></div>
+    <!-- 메인내용시작 -->
+    <div class="container">
+    <div class="row">
+    <div class="col"></div>
+    <div class="main col-8">
 	<h1>사원 목록</h1>
-	<table border="1">
+	<table class="table table-hover"border="1">
 		<tr>
 			<th>empId</th>
 			<th>empName</th>
@@ -112,8 +158,9 @@
 					<td><%=(String)(m.get("empName"))%></td>
 					<td><%=(String)(m.get("empJob"))%></td>
 					<td><%=(String)(m.get("hireDate"))%></td>
-					<td>	
-						<a href='modifyEmpActive.jsp?active=<%=(String)(m.get("active"))%>'>
+					<td>
+
+						<a href='modifyEmpActive.jsp?active= <%=(String)(m.get("active"))%>&empId=<%=(String)(m.get("empId"))%>'>
 							<%=(String)(m.get("active"))%>
 						</a>
 					</td>
@@ -122,36 +169,53 @@
 			}
 		%>
 	</table>
-    
-                    <div class="page">
-                    <nav aria-label="Page navigation">
-                      <ul class="pagination justify-content-center">
-                      <%
-                        if(currentPage > 1 && currentPage < lastPage){
-                      %>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=1">&laquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage-1%>">&lsaquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage+1%>">&rsaquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
-                      <%
-                        }else if(currentPage == 1){
-                      %>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage+1%>">&rsaquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
-                      <%
-                        }else if(currentPage == lastPage){
-                      %>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=1">&laquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage-1%>">&lsaquo;</a></li>
-                            <li class="page-item"><a class="page-link" href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                      <%
-                        }
-                      %>
-                        
-                      </ul>
-                    </nav>
-                </div>
+
+    <div class="page">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <%
+                    if (currentPage > 1 && currentPage < lastPage) {
+                %>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage - 1%>">&lsaquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage + 1%>">&rsaquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
+                <%
+                    } else if (currentPage == 1) {
+                %>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage + 1%>">&rsaquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
+                <%
+                    } else if (currentPage == lastPage) {
+                %>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage - 1%>">&lsaquo;</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/shop/emp/empList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
+                <%
+                    }
+                %>
+
+            </ul>
+        </nav>
+    </div>
+    <!-- 메인내용끝 -->
+    </div>
+    <div class="col"></div>
+    </div>
+
+</div>
 </body>
 </html>
