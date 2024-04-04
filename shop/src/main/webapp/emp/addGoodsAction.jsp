@@ -18,19 +18,21 @@
     /* session 설정값 : 입력시 로그인 emp의 emp_id값이 필요해서.. */
         HashMap<String,Object> loginMember 
         = (HashMap<String,Object>)(session.getAttribute("loginEmp"));
-        System.out.println((String)(loginMember.get("empId"))+"아이디정보 addGoodsAction.jsp");
+        
 %>
     
 <%
     //1. 요청 분석
     
+    String category = request.getParameter("category");
     String goodsTitle = request.getParameter("goodsTitle");
-    int goodsPrice = Integer.parseInt(request.getParameter("goodsPrice"));
-    int goodsAmount = Integer.parseInt(request.getParameter("goodsAmount"));
+    int goodsPrice = Integer.parseInt(request.getParameter("goodsPrice"));  
     String goodsContent = request.getParameter("goodsContent");
+    int goodsAmount = Integer.parseInt(request.getParameter("goodsAmount"));
     
     
     //디버깅
+    System.out.println(category + "<------category");
     System.out.println(goodsTitle + "<------goodsTitle");
     System.out.println(goodsPrice + "<------goodsPrice");
     System.out.println(goodsAmount + "<------goodsAmount");
@@ -39,7 +41,7 @@
     
     //2. 비지니스 코드
     
-    String addsql = "INSERT INTO goods(category, emp_id, goods_title, goods_content, goods_price,goods_amount) VALUES()";
+    String addsql = "INSERT INTO goods(category, emp_id, goods_title, goods_content, goods_price, goods_amount, update_date, create_date) VALUES(?, ?, ?, ?, ?, ?, NOW(),NOW())";
     Class.forName("org.mariadb.jdbc.Driver");
     
 	//자원초기화
@@ -47,6 +49,14 @@
 	PreparedStatement stmt = null;
 	
 	conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+    
+	stmt = conn.prepareStatement(addsql);	
+	stmt.setString(1,category);
+	stmt.setString(2,(String)loginMember.get("empId"));
+	stmt.setString(3,goodsTitle);
+	stmt.setString(4,goodsContent);
+	stmt.setInt(5,goodsPrice);
+	stmt.setInt(6,goodsAmount);
     
 	System.out.println(stmt);
 	
@@ -56,10 +66,8 @@
 		response.sendRedirect("/shop/emp/goodsList.jsp");
 	} else {
 		System.out.println("입력실패");
+		response.sendRedirect("/shop/emp/addGoodsForm.jsp");
 	}
-
-	// 3. 목록(addDiaryForm.jsp)을 재요청(redirect) 하게 한다
-	response.sendRedirect("/shop/emp/addGoodsForm.jsp");
 
 
 %>

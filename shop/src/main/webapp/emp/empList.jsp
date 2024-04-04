@@ -66,6 +66,8 @@
 	
 	ArrayList<HashMap<String, Object>> list
 		= new ArrayList<HashMap<String, Object>>();
+    
+    //각자의 타입이 다르기때문에 최고객체인 hashMap 을쓴다
 	
 	// ResultSet -> ArrayList<HashMap<String, Object>>
 	while(rs.next()) {

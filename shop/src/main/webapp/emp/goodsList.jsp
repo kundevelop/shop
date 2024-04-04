@@ -14,7 +14,8 @@
 %>
 
 <%
-
+    
+    
 
     String category = request.getParameter("category");
     // request 분석
@@ -26,7 +27,7 @@
     int rowPerPage = 10;
     int startRow = (currentPage-1)*rowPerPage;
     
-    // 화면에 표시할 직원리스트 개수 DB에서 가져오기
+    // 화면에 표시할 카테고리 개수 DB에서 가져오기
     Class.forName("org.mariadb.jdbc.Driver");
     Connection conn = null;
     conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
@@ -48,7 +49,7 @@
     int lastPage = goodsCnt / rowPerPage;
     if(goodsCnt % rowPerPage != 0){
         lastPage = goodsCnt / rowPerPage + 1;
-    }
+    }   
     /*
         null이면
         SELECT * FROM goods
@@ -171,6 +172,7 @@
         <div class="row">
         <div class="col"></div>
         <div class="main col-9">
+        
         <table class="table table-hover"border="1">
             <tr>
                 
