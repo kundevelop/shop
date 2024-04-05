@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ page import="java.sql.*"%>
-    <%@ page import = "java.net.*"%>
     <%@ page import="java.util.*"%>
 <!-- Controller Layer -->    
 
@@ -14,49 +13,57 @@
 %>
 
 <%
-    
-    
-
-    String category = request.getParameter("category");
-    // request 분석
+    /* 페이징 */
     int currentPage = 1;
     if(request.getParameter("currentPage") != null) {
         currentPage = Integer.parseInt(request.getParameter("currentPage"));
     }
     
-    int rowPerPage = 10;
+    
+    int rowPerPage = 10; //한페이지에 보여주는 갯수
     int startRow = (currentPage-1)*rowPerPage;
     
-    // 화면에 표시할 카테고리 개수 DB에서 가져오기
+    
+    // DB연결
     Class.forName("org.mariadb.jdbc.Driver");
     Connection conn = null;
     conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
     
-    String goodsCntSql = "SELECT COUNT(*) cnt FROM goods";
-    PreparedStatement goodsCntStmt = null;
-    ResultSet goodsCntRs = null;
-    
-    goodsCntStmt = conn.prepareStatement(goodsCntSql);
-    goodsCntRs = goodsCntStmt.executeQuery();
-    
-    int goodsCnt = 0;
-    while(goodsCntRs.next()){
-        goodsCnt = goodsCntRs.getInt("cnt");
-    }
-    System.out.println("goodsCnt : " + goodsCnt);
     
     // 가장 마지막 페이지
-    int lastPage = goodsCnt / rowPerPage;
-    if(goodsCnt % rowPerPage != 0){
-        lastPage = goodsCnt / rowPerPage + 1;
-    }   
-    /*
-        null이면
-        SELECT * FROM goods
-        null이 아니면
-        SELECT * FROM goods WHERE category=?
+    String pageSql = "SELECT COUNT(*) AS cnt FROM goods";
     
+    PreparedStatement  pageStmt = null;
+    ResultSet  pageRs = null;
+    
+    pageStmt = conn.prepareStatement( pageSql);
+    pageRs =  pageStmt.executeQuery();
+    
+    int totalRow = 0;
+    while(pageRs.next()){
+    	 totalRow =  pageRs.getInt("cnt");
+    }
+    System.out.println("totalRow : " + totalRow);
+    
+    int lastPage = totalRow / rowPerPage;
+    if(totalRow % rowPerPage != 0){
+        lastPage = lastPage + 1;
+    }   
+    
+    /*  
+        null이면 SELECT * FROM goods
+        null이 아니면 SELECT * FROM goods WHERE category=?
+
     */
+
+    // request 분석
+    String category = request.getParameter("category");
+    System.out.println("category :" + category);
+    
+    if(category == null) {
+        category = "";
+        
+    }
 %>
 
 <!-- Model Layer -->
@@ -76,12 +83,10 @@
     limit ?,?";
     */
 
+    String sql = "SELECT category, count(*) cnt FROM goods GROUP BY category ORDER BY category asc";
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    String sql = "select category, goods_title AS goodsTitle, goods_price AS goodsPrice, goods_amount AS goodsAmount from goods order by category asc limit ?,?";
     stmt = conn.prepareStatement(sql);
-    stmt. setInt(1, startRow);
-    stmt. setInt(2, rowPerPage);
     rs = stmt.executeQuery(); 
     
     ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>();
@@ -89,23 +94,63 @@
 		HashMap<String, Object> m = new HashMap<String, Object>();
 		
 		m.put("category", rs.getString("category"));
-		m.put("goodsTitle", rs.getString("goodsTitle"));
-		
-		m.put("goodsPrice", rs.getString("goodsPrice"));
-		m.put("goodsAmount", rs.getString("goodsAmount"));
+		m.put("cnt", rs.getString("cnt"));
 		categoryList.add(m);
 	}
 	// 디버깅
 	System.out.println(categoryList);
     
+    
+    
+    ResultSet rs2 = null;
+    String sql2 = null;
+    PreparedStatement stmt2 = null;
+    
+    //카테고리 선택에 따라 바뀌어야 하기때문에 
+    if(category == ""){ 
+        sql2 = "SELECT * FROM goods LIMIT ?,?";
+        stmt2 = conn.prepareStatement(sql2);
+        stmt2.setInt(1, startRow);
+        stmt2.setInt(2, rowPerPage);       
+    } else {
+        sql2 = "SELECT * FROM goods WHERE category = ? LIMIT ?,?";
+        stmt2 = conn.prepareStatement(sql2);
+        stmt2.setString(1, category);
+        stmt2.setInt(2, startRow);
+        stmt2.setInt(3, rowPerPage);
+    }
+    
+    rs2 = stmt2.executeQuery();
+    
+    
+    //ArrayList에 넣기
+    ArrayList<HashMap<String, Object>> goodsKind = new ArrayList<HashMap<String, Object>>();
+    
+    while(rs2.next()) {
+        HashMap<String, Object> gk = new HashMap<String, Object>();
+        gk.put("category", rs2.getInt("goods_no"));
+        
+        gk.put("goodsTitle", rs2.getString("goods_title"));
+        
+        gk.put("goodsPrice", rs2.getInt("goods_price"));
+    	
+        goodsKind.add(gk);
+        
+    }
+    //디버깅
+    System.out.println(categoryList);
+    System.out.println(goodsKind);
+    
+    
+    
     //자원 반납
-    goodsCntStmt.close();
-    goodsCntRs.close();
+    //pageStmt.close();
+    //pageRs.close();
     
-    rs.close();
-    stmt.close();
+    //rs.close();
+    //stmt.close();
     
-    conn.close();
+    //conn.close();
  %>
  
 
@@ -137,7 +182,8 @@
         .table{
             text-align: center;
             width: 700px;
-            margin-left: 10px;
+            margin-left: 80px;
+            
             
         }
         
@@ -166,14 +212,16 @@
 	</div>
 
 	<!-- 서브메뉴 카테고리별 상품리스트 -->
-	<div>
+	
 		<a href="/shop/emp/goodsList.jsp">전체</a>
         <div class="container">
         <div class="row">
         <div class="col"></div>
-        <div class="main col-9">
+        <div class="main col-8">
+        <h1>상품관리</h1>
+        <table class="table table-hover" border="1" >
         
-        <table class="table table-hover"border="1">
+        
             <tr>
                 
                 <th>애니제목</th>
@@ -189,25 +237,24 @@
                 <td>
     				<a href="/shop/emp/goodsList.jsp?category=<%=(String)(m.get("category"))%>">
     					<%=(String)(m.get("category"))%>
+                        (<%=(Integer)(m.get("cnt"))%>)
     					
     				</a>
                 </td>
                 
-                <td><%=(String)(m.get("goodsTitle"))%></td>
-                <td><%=(String)(m.get("goodsPrice"))%></td>
-                <td><%=(String)(m.get("goodsAmount"))%></td>
                 
             </tr>	
 		<%		
 			}
 		%>
         </table>
-	</div>
+	
     
     <!-- 굿즈 리스트  -->
     <div class="page">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
+
                 <%
                     if (currentPage > 1 && currentPage < lastPage) {
                 %>
@@ -247,10 +294,12 @@
         </nav>
     </div>
     <!-- 굿즈 리스트 끝 -->
+    
     </div>
     <div class="col"></div>
     </div>
+    </div>
 
-</div>
+
 </body>
 </html>

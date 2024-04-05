@@ -45,7 +45,7 @@
 	</div>
 	
 	<h1>상품등록</h1>
-	<form method="post" action="/shop/emp/addGoodsAction.jsp">
+	<form method="post" action="/shop/emp/addGoodsAction.jsp" enctype="multipart/form-data">
 		<div>
 			category :
 			<select name="category">
@@ -64,6 +64,13 @@
 			굿즈이름 :
 			<input type="text" name="goodsTitle">
 		</div>
+        
+                
+        <div>
+            굿즈사진 :
+            <input type="file" name="goodsImg">
+        </div>
+        
 		<div>
 			굿즈가격 :
 			<input type="number" name="goodsPrice">

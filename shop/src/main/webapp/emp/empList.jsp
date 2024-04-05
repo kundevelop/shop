@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
-<%@ page import = "java.net.*" %>
 <%@ page import="java.util.*"%>
 
 
@@ -137,7 +136,7 @@
     <!-- empMenu.jsp include : 주체(서버) vs redirect(주체:클라이언트) -->
     <!-- 주체가 서버이기 include 할때는 절대주소가 /shop/...시작하지 않는다 -->
     <jsp:include page="/emp/inc/empMenu.jsp"></jsp:include>
-	<div><a href="/shop/emp/empLogout.jsp">로그아웃</a></div>
+	
     <!-- 메인내용시작 -->
     <div class="container">
     <div class="row">
