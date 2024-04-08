@@ -1,305 +1,221 @@
+<%@page import="javax.naming.spi.DirStateFactory.Result"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="java.sql.*"%>
-    <%@ page import="java.util.*"%>
-<!-- Controller Layer -->    
+<%@ page import = "java.sql.*"%>    
+<%@ page import = "java.util.*" %>
+
+<%     
+		if(session.getAttribute("loginEmp") == null) {
+			response.sendRedirect("/shop/emp/empLoginForm.jsp");
+			return;
+		}
+%>    
 
 <%
-    // 인증분기  : 세션변수 이름 - loginEmp
-    if(session.getAttribute("loginEmp") == null) {
-        response.sendRedirect("/shop/emp/empLoginForm.jsp");
-        return;
-    }
+ 	// 페이징 1 
+ 	// 페이지 출력 할 개수 설정, 검색할 테이블 행의 index 값 설정 
+	int currentPage = 1;
+	if(request.getParameter("currentPage") != null) {
+		currentPage = Integer.parseInt(request.getParameter("currentPage"));
+	}
+	
+	String category = request.getParameter("category"); // null이면 전체 출력 , null이 아니면 특정 카테고리만 출력 
+	
+	int rowPerPage = 12; // 페이지 출력 데이터 수
+	
+	// 검색을 시작할 행의 인덱스를 나타내는 변수 
+	// startRow > SQL limit
+	int startRow = (currentPage-1)*rowPerPage; 
+	
 %>
-
-<%
-    /* 페이징 */
-    int currentPage = 1;
-    if(request.getParameter("currentPage") != null) {
-        currentPage = Integer.parseInt(request.getParameter("currentPage"));
-    }
-    
-    
-    int rowPerPage = 10; //한페이지에 보여주는 갯수
-    int startRow = (currentPage-1)*rowPerPage;
-    
-    
-    // DB연결
-    Class.forName("org.mariadb.jdbc.Driver");
-    Connection conn = null;
-    conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
-    
-    
-    // 가장 마지막 페이지
-    String pageSql = "SELECT COUNT(*) AS cnt FROM goods";
-    
-    PreparedStatement  pageStmt = null;
-    ResultSet  pageRs = null;
-    
-    pageStmt = conn.prepareStatement( pageSql);
-    pageRs =  pageStmt.executeQuery();
-    
-    int totalRow = 0;
-    while(pageRs.next()){
-    	 totalRow =  pageRs.getInt("cnt");
-    }
-    System.out.println("totalRow : " + totalRow);
-    
-    int lastPage = totalRow / rowPerPage;
-    if(totalRow % rowPerPage != 0){
-        lastPage = lastPage + 1;
-    }   
-    
-    /*  
-        null이면 SELECT * FROM goods
-        null이 아니면 SELECT * FROM goods WHERE category=?
-
-    */
-
-    // request 분석
-    String category = request.getParameter("category");
-    System.out.println("category :" + category);
-    
-    if(category == null) {
-        category = "";
-        
-    }
-%>
-
+ 
 <!-- Model Layer -->
 
 <%
-    // 특수한 형태의 데이터(RDBMS:mariadb) 
-    // -> API사용(JDBC API)하여 자료구조(ResultSet) 취득 
-    // -> 일반화된 자료구조(ArrayList<HashMap>)로 변경 -> 모델 취득
-    
-    /*
-    String sql = "select category, 
-    goods_title AS goodsTitle, 
-    goods_price AS goodsPrice, 
-    goods_amount AS goodsAmount,  
-    from goods 
-    order by category asc 
-    limit ?,?";
-    */
-
-    String sql = "SELECT category, count(*) cnt FROM goods GROUP BY category ORDER BY category asc";
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    stmt = conn.prepareStatement(sql);
-    rs = stmt.executeQuery(); 
-    
-    ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>();
+	// JDBC 드라이버
+	Class.forName("org.mariadb.jdbc.Driver");	
+	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+	
+	// 카테고리 sql
+	String sql = "select category, count(*) AS cnt from goods group by category order by category";
+	PreparedStatement stmt = conn.prepareStatement(sql);
+	ResultSet rs = stmt.executeQuery();
+	
+	ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>(); 
+	// 카테고리 리스트 
 	while(rs.next()) {
+
 		HashMap<String, Object> m = new HashMap<String, Object>();
-		
 		m.put("category", rs.getString("category"));
-		m.put("cnt", rs.getString("cnt"));
+		m.put("cnt", rs.getInt("cnt"));
 		categoryList.add(m);
 	}
-	// 디버깅
-	System.out.println(categoryList);
-    
-    
-    
-    ResultSet rs2 = null;
-    String sql2 = null;
-    PreparedStatement stmt2 = null;
-    
-    //카테고리 선택에 따라 바뀌어야 하기때문에 
-    if(category == ""){ 
-        sql2 = "SELECT * FROM goods LIMIT ?,?";
-        stmt2 = conn.prepareStatement(sql2);
-        stmt2.setInt(1, startRow);
-        stmt2.setInt(2, rowPerPage);       
-    } else {
-        sql2 = "SELECT * FROM goods WHERE category = ? LIMIT ?,?";
-        stmt2 = conn.prepareStatement(sql2);
-        stmt2.setString(1, category);
-        stmt2.setInt(2, startRow);
-        stmt2.setInt(3, rowPerPage);
-    }
-    
-    rs2 = stmt2.executeQuery();
-    
-    
-    //ArrayList에 넣기
-    ArrayList<HashMap<String, Object>> goodsKind = new ArrayList<HashMap<String, Object>>();
-    
-    while(rs2.next()) {
-        HashMap<String, Object> gk = new HashMap<String, Object>();
-        gk.put("category", rs2.getInt("goods_no"));
-        
-        gk.put("goodsTitle", rs2.getString("goods_title"));
-        
-        gk.put("goodsPrice", rs2.getInt("goods_price"));
-    	
-        goodsKind.add(gk);
-        
-    }
-    //디버깅
-    System.out.println(categoryList);
-    System.out.println(goodsKind);
-    
-    
-    
-    //자원 반납
-    //pageStmt.close();
-    //pageRs.close();
-    
-    //rs.close();
-    //stmt.close();
-    
-    //conn.close();
- %>
- 
+	// 카테고리 리스트 디버깅
+	System.out.println("categoryList:" + categoryList);
+	
+	
+	// 상품 리스트
+	// list 배열안에 hashmap 형식으로 저장
 
-
-
+	String sql2 = "SELECT * FROM goods where category LIKE ? ORDER BY update_date desc limit ?, ?";
+	PreparedStatement stmt2 = conn.prepareStatement(sql2);
+	stmt2.setString(1, "%"+category+"%"); // %나루토%
+	stmt2.setInt(2, startRow);
+	stmt2.setInt(3, rowPerPage);
+	
+	ResultSet rs2 = stmt2.executeQuery();
+	
+	ArrayList<HashMap<String, Object>> goodsList = new ArrayList<HashMap<String, Object>>();
+		while(rs2.next()) {
+	
+		
+			// <> 파라미터 생략 가능
+			HashMap<String, Object> m2 = new HashMap<>();
+				m2.put("goodsNo", rs2.getInt("goods_no"));
+				m2.put("category", rs2.getString("category"));
+				m2.put("empId", rs2.getString("emp_id"));
+                m2.put("filename", rs2.getString("filename"));
+				m2.put("goodsTitle", rs2.getString("goods_title"));
+				m2.put("goodsContent", rs2.getString("goods_content"));
+				m2.put("goodsPrice", rs2.getInt("goods_price"));
+				m2.put("goodsAmount", rs2.getInt("goods_amount"));
+				m2.put("updateDate", rs2.getString("update_date"));
+				// HaspMap타입을 list 형식에 저장 
+				goodsList.add(m2);
+		}
+		
+		// 페이징2 페이지 목록 수 계산
+		// 특정 카테고리 데이터 행 개수
+		String sql3 = "SELECT COUNT(*) cnt FROM goods WHERE category LIKE ?";
+		PreparedStatement stmt3 = conn.prepareStatement(sql3);
+		stmt3.setString(1, "%"+category+"%");
+		ResultSet rs3 = stmt3.executeQuery();
+		
+		// 행 개수 담을 변수
+		int totalRow = 0;
+		if(rs3.next()) {
+			totalRow = rs3.getInt("cnt");
+		}
+		
+		// 총 페이지 수 
+		int lastPage = totalRow / rowPerPage; // 전체 행 개수 / 한 페이지 출력 수 
+		if(totalRow % rowPerPage !=0) {
+			// 페이지 출력 된 데이터 행의 개수가 20씩 떨어지지 않으면 다음 페이지 생성
+			lastPage = lastPage+1; 
+		}
+		
+%> 
+    
 <!-- View Layer -->
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>goodList</title>
-            <!-- Latest compiled and minified CSS -->
+<meta charset="UTF-8">
+<title>Insert title here</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap');
     </style>
     <style>
-        .container{
+        .font{
             font-family:"Grandiflora One", cursive;
             font-weight: bold;
             font-optical-sizing: auto;
             font-style: normal;
         }
-    
-        .main{
-            text-align: center;
+        a {
+            text-decoration-line: none;
         }
         
-        .table{
-            text-align: center;
-            width: 700px;
-            margin-left: 80px;
-            
-            
-        }
+          #imgDiv {
+            max-width: 50%;
+            max-height: 50%;
+        } 
         
-        a{
-            text-decoration: none;
-        }
-        
-        a.page-link{
-            color: #000000;
-        }
-        
-        a.page-link:hover{
-            background-color: #000000;
-            color: #FFFFFF;
-        }
     </style>
 </head>
-<body>
- <!-- 메인메뉴 -->
+<body class="font">
+	<!-- 메인 메뉴 -->
 	<div>
 		<jsp:include page="/emp/inc/empMenu.jsp"></jsp:include>
 	</div>
 	
 	<div>
-		<a href="/shop/emp/addGoodsForm.jsp">상품등록</a>	
+		<a href="/shop/emp/addGoodsForm.jsp">상품등록</a>
 	</div>
-
-	<!-- 서브메뉴 카테고리별 상품리스트 -->
 	
-		<a href="/shop/emp/goodsList.jsp">전체</a>
-        <div class="container">
-        <div class="row">
-        <div class="col"></div>
-        <div class="main col-8">
-        <h1>상품관리</h1>
-        <table class="table table-hover" border="1" >
-        
-        
-            <tr>
-                
-                <th>애니제목</th>
-                <th>굿즈이름</th>
-                <th>굿즈가격</th>
-                <th>남은양</th>
-            
-            </tr>
+	<!-- 서브 메뉴 카테고리별 상품리스트 -->
+	<div>
+		<a href="/shop/emp/goodsTotalList.jsp">전체</a>
 		<%
-			for(HashMap<String, Object> m : categoryList) {
+			for(HashMap m : categoryList) {
 		%>
-            <tr>
-                <td>
-    				<a href="/shop/emp/goodsList.jsp?category=<%=(String)(m.get("category"))%>">
-    					<%=(String)(m.get("category"))%>
-                        (<%=(Integer)(m.get("cnt"))%>)
-    					
-    				</a>
-                </td>
-                
-                
-            </tr>	
-		<%		
+				<a href="/shop/emp/goodsList.jsp?category=<%=(String)(m.get("category"))%>">
+					<%=(String) (m.get("category")) %>
+					(<%=(Integer) (m.get("cnt"))%>)
+				</a>	
+		<%
 			}
 		%>
-        </table>
+	</div>
 	
-    
-    <!-- 굿즈 리스트  -->
-    <div class="page">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-
-                <%
-                    if (currentPage > 1 && currentPage < lastPage) {
-                %>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=1">&laquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage - 1%>">&lsaquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage + 1%>">&rsaquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
-                <%
-                    } else if (currentPage == 1) {
-                %>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage + 1%>">&rsaquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=lastPage%>">&raquo;</a></li>
-                <%
-                    } else if (currentPage == lastPage) {
-                %>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=1">&laquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage - 1%>">&lsaquo;</a></li>
-                    <li class="page-item"><a class="page-link"
-                        href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage%>"><%=currentPage%></a></li>
-                <%
-                    }
-                %>
-
-            </ul>
-        </nav>
-    </div>
-    <!-- 굿즈 리스트 끝 -->
-    
-    </div>
-    <div class="col"></div>
-    </div>
-    </div>
-
-
+	<!-- 상품 리스트 -->
+	<div style="display: flex; flex-wrap: wrap;">
+		<%
+			for(HashMap<String, Object> m2 : goodsList) {
+		%>
+			<div style="width: 300px; margin: 10px; border: 1px solid #ccc; padding: 10px;">	
+                <div >
+                    <img alt="이미지" id="imgDiv" src="/shop/upload/<%=(String)(m2.get("filename"))%>">
+                </div>  
+                
+				<div>
+					상품번호:<%=(Integer)m2.get("goodsNo") %>
+				</div>
+                
+				<div>
+					카테고리:<%=(String)m2.get("category") %>
+				</div>	
+				<div>
+					제목:<%=(String)m2.get("goodsTitle") %>
+				</div>
+                
+                <div>
+                    가격:<%=(Integer)m2.get("goodsPrice") %>
+                </div>
+                
+                <div>
+                    수량:<%=(Integer)m2.get("goodsAmount") %>
+                </div>
+                <div>
+                    <a href = "">수정</a>
+                    <a href = "deleteGoodsOne.jsp?goodsNo=<%=(Integer)(m2.get("goodsNo"))%>">삭제</a>
+                    
+                </div>
+			</div>		
+		<%
+			}
+		%>
+	</div>
+	
+	<!-- 페이지 -->
+	<div>
+		<%
+			if(currentPage > 1) {
+ 		%>
+ 				<a href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage-1%>&category=<%=category%>">이전</a>
+ 		<%
+			}
+		%>
+		
+		<%
+			if(currentPage < lastPage) {
+		%>
+				<a href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage+1%>&category=<%=category%>">다음</a>
+		<%
+			}
+		%>
+	</div>
+	
 </body>
 </html>

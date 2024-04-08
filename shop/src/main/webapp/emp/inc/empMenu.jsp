@@ -6,7 +6,14 @@
         = (HashMap<String,Object>)(session.getAttribute("loginEmp"));
     
 %>
-
+<head>
+    <style>
+        a {
+            text-decoration-line: none;
+        }
+        
+    </style>
+</head>
 
 
 
