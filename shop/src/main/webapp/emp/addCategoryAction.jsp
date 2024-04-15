@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import = "shop.dao.*" %>
     
 <%
     //post로 넘겻으면 인코딩
@@ -20,9 +21,9 @@
     System.out.println(categoryadd + "<----categoryadd");
     
     
-	Connection conn = null;
+    //DB연결(비빌번호 노출방지)
+    Connection conn = DBHelper.getConnection();
 	PreparedStatement stmt = null;
-	conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
 
     String sql= "INSERT INTO category(category, create_date) VALUES(?,NOW())";
     stmt = conn. prepareStatement(sql);

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import = "shop.dao.*" %>
 
 
 <!-- Controller Layer -->
@@ -23,9 +24,12 @@
 	int rowPerPage = 10;
 	int startRow = (currentPage-1)*rowPerPage;
 	// 화면에 표시할 직원리스트 개수 DB에서 가져오기
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = null;
-	conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+	Connection conn = DBHelper.getConnection();
+    
+	//Class.forName("org.mariadb.jdbc.Driver");
+	//Connection conn = null;
+	//conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+    
 	
 	String empCntSql = "SELECT COUNT(*) cnt FROM emp";
 	PreparedStatement empCntStmt = null;

@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
     <%@ page import="java.sql.*"%>
     <%@ page import="java.util.*"%>
+    <%@ page import = "shop.dao.*" %>
 <!-- Controller Layer -->    
 
 <%
@@ -24,10 +25,8 @@
     int startRow = (currentPage-1)*rowPerPage;
     
     
-    // DB연결
-    Class.forName("org.mariadb.jdbc.Driver");
-    Connection conn = null;
-    conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+    //DB연결(비빌번호 노출방지)
+    Connection conn = DBHelper.getConnection();
     
     
     // 가장 마지막 페이지

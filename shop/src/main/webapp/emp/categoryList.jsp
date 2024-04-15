@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import = "shop.dao.*" %>
     
 <!-- Controller Layer -->
 
@@ -15,9 +16,8 @@
 
 <!-- model layer -->
 <%
-    Connection conn = null;
-    Class.forName("org.mariadb.jdbc.Driver");
-    conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+    //DB연결(비빌번호 노출방지)
+    Connection conn = DBHelper.getConnection();
     
     String sql = "SELECT *,(SELECT COUNT(*) FROM category) cnt FROM category "; //테이블이 나눠져 있어서 서브쿼리를 사용
 	PreparedStatement stmt = null;

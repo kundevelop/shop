@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import = "java.net.*"%>
+<%@ page import = "shop.dao.*" %>
 <%
     // 인증분기  : 세션변수 이름 - loginEmp
     if(session.getAttribute("loginEmp") == null) {
@@ -22,8 +23,8 @@
 	
 	String sql = null;
 	sql = "update emp set active = ? where emp_id = ?";
-	Class.forName("org.mariadb.jdbc.Driver");
-	Connection conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
+    //DB연결(비빌번호 노출방지)
+    Connection conn = DBHelper.getConnection();
 	PreparedStatement stmt = null;
 	stmt = conn.prepareStatement(sql);
 	stmt.setString(1, active);

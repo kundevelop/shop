@@ -4,6 +4,7 @@
 <%@ page import="java.util.*"%>
 <%@ page import="java.io.*" %>
 <%@ page import="java.nio.file.*" %>
+<%@ page import = "shop.dao.*" %>
 
 <%
     //post로 넘겻으면 인코딩
@@ -60,11 +61,10 @@
     String addsql = "INSERT INTO goods(category, emp_id, goods_title, filename, goods_content, goods_price, goods_amount, update_date, create_date) VALUES(?, ?, ?, ?, ?, ?, ?, NOW(),NOW())";
     Class.forName("org.mariadb.jdbc.Driver");
     
-	//자원초기화
-	Connection conn = null;
+    //DB연결(비빌번호 노출방지)
+    Connection conn = DBHelper.getConnection();
 	PreparedStatement stmt = null;
 	
-	conn = DriverManager.getConnection("jdbc:mariadb://127.0.0.1:3306/shop", "root", "java1234");
     
 	stmt = conn.prepareStatement(addsql);	
 	stmt.setString(1,category);
