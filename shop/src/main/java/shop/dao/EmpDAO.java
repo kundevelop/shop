@@ -54,4 +54,20 @@ public class EmpDAO {
 	      conn.close();
 	      return resultMap;
 	   }
+	   
+	   public static HashMap<String, Object> empList(int startRow, int rowPerPage) throws Exception {
+		   HashMap<String, Object> empList = null;
+		   
+		      // DB 접근
+		      Connection conn = DBHelper.getConnection(); 
+		      
+		      String sql = "select emp_id empId, emp_name empName, emp_job empJob, hire_date hireDate, active from emp order by hire_date desc limit ?, ?";
+			  	PreparedStatement stmt = conn.prepareStatement(sql);
+			  	ResultSet rs = stmt.executeQuery();
+				stmt.setInt(1, startRow);
+				stmt.setInt(2, rowPerPage);
+		   
+	   }
+	   
+	   
 	}
