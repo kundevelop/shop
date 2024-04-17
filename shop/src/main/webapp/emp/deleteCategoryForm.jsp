@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import="shop.dao.*" %>
 
 <!-- Controller Layer -->
 
@@ -14,7 +15,8 @@
 %>
 
 <%
-
+	//DB연결(비빌번호 노출방지)
+	Connection conn = DBHelper.getConnection();
 
 %>
 

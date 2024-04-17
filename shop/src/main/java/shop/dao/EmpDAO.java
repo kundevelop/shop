@@ -55,6 +55,7 @@ public class EmpDAO {
 	      return resultMap;
 	   }
 	   
+	   /*
 	   public static HashMap<String, Object> empList(int startRow, int rowPerPage) throws Exception {
 		   HashMap<String, Object> empList = null;
 		   
@@ -68,6 +69,7 @@ public class EmpDAO {
 				stmt.setInt(2, rowPerPage);
 		   
 	   }
+	   */
 	   
 	   
 	}
