@@ -6,10 +6,16 @@
 <%@ page import = "shop.dao.*" %>
 
 <%     
-		if(session.getAttribute("loginEmp") == null) {
-			response.sendRedirect("/shop/emp/empLoginForm.jsp");
-			return;
-		}
+	//로그인 인증 분기 : 세션 변수 이름 - loginCustomer
+	
+	if(session.getAttribute("loginCustomer") == null) { //null 이면 로그인이 안된상태 이므로 로그인폼으로 돌아감
+	    response.sendRedirect("/shop/customer/customerLoginForm.jsp");
+	    return;
+	}
+	
+	//애러메세지 받아오기
+	String errMsg = request.getParameter("errMsg");
+
 %>    
 
 <%
@@ -38,62 +44,9 @@
 	
 	// 카테고리 sql
     ArrayList<HashMap<String, Object>> categoryList= GoodsDAO.selectCategoryList();
-	/*
-    String sql = "select category, count(*) AS cnt from goods group by category order by category";
-	PreparedStatement stmt = conn.prepareStatement(sql);
-	ResultSet rs = stmt.executeQuery();
-	
-	ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>(); 
-	// 카테고리 리스트 
-	while(rs.next()) {
-
-		HashMap<String, Object> m = new HashMap<String, Object>();
-		m.put("category", rs.getString("category"));
-		m.put("cnt", rs.getInt("cnt"));
-		categoryList.add(m);
-	}
-	// 카테고리 리스트 디버깅
-	System.out.println("categoryList:" + categoryList);
-    */
-    
-	
-	// 상품 리스트
-	// list 배열안에 hashmap 형식으로 저장
     
     ArrayList<HashMap<String, Object>> goodslist= GoodsDAO.selectGoodsList(category, startRow, rowPerPage);
 
-    /* 
-    String sql2 = "SELECT * FROM goods where category LIKE ? ORDER BY update_date desc limit ?, ?";
-	PreparedStatement stmt2 = conn.prepareStatement(sql2);
-	stmt2.setString(1, "%"+category+"%"); // %나루토%
-	stmt2.setInt(2, startRow);
-	stmt2.setInt(3, rowPerPage);
-	
-	ResultSet rs2 = stmt2.executeQuery();
-	
-	ArrayList<HashMap<String, Object>> goodsList = new ArrayList<HashMap<String, Object>>();
-		while(rs2.next()) {
-	
-		
-			// <> 파라미터 생략 가능
-			HashMap<String, Object> m2 = new HashMap<>();
-				m2.put("goodsNo", rs2.getInt("goods_no"));
-				m2.put("category", rs2.getString("category"));
-				m2.put("empId", rs2.getString("emp_id"));
-                m2.put("filename", rs2.getString("filename"));
-				m2.put("goodsTitle", rs2.getString("goods_title"));
-				m2.put("goodsContent", rs2.getString("goods_content"));
-				m2.put("goodsPrice", rs2.getInt("goods_price"));
-				m2.put("goodsAmount", rs2.getInt("goods_amount"));
-				m2.put("updateDate", rs2.getString("update_date"));
-				// HaspMap타입을 list 형식에 저장 
-				goodsList.add(m2); 
-		}
-        */
-		
-		// 페이징2 페이지 목록 수 계산
-		// 특정 카테고리 데이터 행 개수
-		//ArrayList<HashMap<String, Object>> categorytuple =GoodsDAO.selectCategorytuple(category);
 		
         String sql3 = "SELECT COUNT(*) cnt FROM goods WHERE category LIKE ?";
 		PreparedStatement stmt3 = conn.prepareStatement(sql3);
@@ -124,7 +77,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>관리자 굿즈 리스트</title>
+<title>굿즈 리스트</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap');
@@ -149,13 +102,9 @@
 </head>
 <body class="font">
 	<!-- 메인 메뉴 -->
-	<div>
-		<jsp:include page="/emp/inc/empMenu.jsp"></jsp:include>
-	</div>
-	
-	<div>
-		<a href="/shop/emp/addGoodsForm.jsp">상품등록</a>
-	</div>
+
+	<a href="/shop/customer/customerLogout.jsp">로그아웃</a>
+
 	
 	<!-- 서브 메뉴 카테고리별 상품리스트 -->
 	<div>
@@ -163,7 +112,7 @@
 		<%
 			for(HashMap m : categoryList) {
 		%>
-				<a href="/shop/emp/goodsList.jsp?category=<%=(String)(m.get("category"))%>">
+				<a href="/shop/customer/goodsList.jsp?category=<%=(String)(m.get("category"))%>">
 					<%=(String) (m.get("category")) %>
 					(<%=(Integer) (m.get("cnt"))%>)
 				</a>	
@@ -216,7 +165,7 @@
 		<%
 			if(currentPage > 1) {
  		%>
- 				<a href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage-1%>&category=<%=category%>">이전</a>
+ 				<a href="/shop/customer/goodsList.jsp?currentPage=<%=currentPage-1%>&category=<%=category%>">이전</a>
  		<%
 			}
 		%>
@@ -224,7 +173,7 @@
 		<%
 			if(currentPage < lastPage) {
 		%>
-				<a href="/shop/emp/goodsList.jsp?currentPage=<%=currentPage+1%>&category=<%=category%>">다음</a>
+				<a href="/shop/customer/goodsList.jsp?currentPage=<%=currentPage+1%>&category=<%=category%>">다음</a>
 		<%
 			}
 		%>

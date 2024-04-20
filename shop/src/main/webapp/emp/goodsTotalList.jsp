@@ -11,6 +11,12 @@
         response.sendRedirect("/shop/emp/empLoginForm.jsp");
         return;
     }
+
+	//로그인 인증 분기 : 세션변수 -> loginCustomer
+	if(session.getAttribute("loginCustomer")!=null){ //로그인이 이미 되어있다면
+		response.sendRedirect("/shop/customer/goodsCList.jsp");
+		return;
+	}
 %>
 
 <%

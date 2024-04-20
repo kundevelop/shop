@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
+	<%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.net.*"%>
@@ -19,10 +19,11 @@
 %>
 
 <%
+	
 	String customerId = request.getParameter("customerId");
-	int customerPw = Integer.parseInt(request.getParameter("customerPw"));
+	String customerPw = request.getParameter("customerPw");
 	String customerName = request.getParameter("customerName");
-	int customerBirth = Integer.parseInt(request.getParameter("customerBirth"));
+	String customerBirth = request.getParameter("customerBirth");
 	String customerGender = request.getParameter("customerGender");
 	
 	System.out.println(customerId + "<--customerId");
@@ -30,20 +31,25 @@
 	System.out.println(customerName + "<--customerName");
 	System.out.println(customerBirth + "<--customerBirth");
 	System.out.println(customerGender + "<--customerGender");
+%>
+
+<%	
+	boolean checkId =CustomerDAO.addCustomerIdCheck(customerId);
+	if(checkId == true){
+		
+		response.sendRedirect("/shop/customer/addCustomerForm.jsp?checkId="+checkId);
+		
+	}
+
+	int row = CustomerDAO.addCustomer(customerId, customerPw, customerName, customerBirth, customerGender);
 	
-	/*"insert into customer(customer_id, customer_pw, customer_name, birth, gender, update_date, create_date)
-		values(?, ?, ?, ?, ? , now(), now())*/
+	if(row>0) {
+		response.sendRedirect("/shop/customer/customerLoginForm.jsp");
+	} else {
+		response.sendRedirect("/shop/customer/addCustomerForm.jsp");
+	}
 	
-	// DB Á¢±Ù
-	Connection conn = DBHelper.getConnection(); 	
-	String sql = "insert into customer('customer_id', customer_pw, customer_name, birth, gender, update_date, create_date) values(?, ?, ?, ?, ? , now(), now())";
 	
-	PreparedStatement stmt=conn.prepareStatement(sql);
-	stmt.setString(1, customerId);
-	stmt.setInt(2, customerPw);
-	stmt.setString(3, customerName);
-	stmt.setInt(4, customerBirth);
-	stmt.setString(5, customerGender);	
 	
 
 

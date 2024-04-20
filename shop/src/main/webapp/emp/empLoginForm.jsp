@@ -19,10 +19,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>로그인</title>
+<title>관리자 로그인</title>
 </head>
 <body>
-    <h1>로그인</h1>
+    <h1>관리자 로그인</h1>
     <form method="post" action="/shop/emp/empLoginAction.jsp">
     
         <div>
