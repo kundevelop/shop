@@ -1,21 +1,19 @@
-	<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.net.*"%>
 <%@ page import="shop.dao.*"%>
 
 <%
-    //·Î±×ÀÎ ÀÎÁõ ºÐ±â : ¼¼¼Ç º¯¼ö ÀÌ¸§ - loginCustomer
+    //ë¡œê·¸ì¸ ì¸ì¦ ë¶„ê¸° : ì„¸ì…˜ ë³€ìˆ˜ ì´ë¦„ - loginCustomer
     
     if(session.getAttribute("loginCustomer") !=null) {
         response.sendRedirect("/shop/customer/goodsList.jsp");
         return;
     }
+	//request.setCharacterEncoding("utf-8");
     
-    //¾Ö·¯¸Þ¼¼Áö ¹Þ¾Æ¿À±â
+    //ì• ëŸ¬ë©”ì„¸ì§€ ë°›ì•„ì˜¤ê¸°
     String errMsg = request.getParameter("errMsg");
-    
-
 %>
 
 <%
@@ -26,22 +24,25 @@
 	String customerBirth = request.getParameter("customerBirth");
 	String customerGender = request.getParameter("customerGender");
 	
+	//ë””ë²„ê¹…
 	System.out.println(customerId + "<--customerId");
 	System.out.println(customerPw + "<--customerPw");
 	System.out.println(customerName + "<--customerName");
 	System.out.println(customerBirth + "<--customerBirth");
 	System.out.println(customerGender + "<--customerGender");
+	
 %>
 
+
 <%	
-	boolean checkId =CustomerDAO.addCustomerIdCheck(customerId);
+	boolean checkId = CustomerDAO.addCustomerIdCheck(customerId);
 	if(checkId == true){
 		
 		response.sendRedirect("/shop/customer/addCustomerForm.jsp?checkId="+checkId);
 		
 	}
 
-	int row = CustomerDAO.addCustomer(customerId, customerPw, customerName, customerBirth, customerGender);
+	int row = CustomerDAO.addCustomerId(customerId, customerPw, customerName, customerBirth, customerGender);
 	
 	if(row>0) {
 		response.sendRedirect("/shop/customer/customerLoginForm.jsp");
@@ -49,8 +50,5 @@
 		response.sendRedirect("/shop/customer/addCustomerForm.jsp");
 	}
 	
-	
-	
-
 
 %>    

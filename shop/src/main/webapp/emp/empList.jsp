@@ -55,6 +55,7 @@
 <!-- Model Layer -->
 
 <%
+	/*
 	// 특수한 형태의 데이터(RDBMS:mariadb) 
 	// -> API사용(JDBC API)하여 자료구조(ResultSet) 취득 
 	// -> 일반화된 자료구조(ArrayList<HashMap>)로 변경 -> 모델 취득
@@ -81,13 +82,13 @@
 		m.put("hireDate", rs.getString("hireDate"));
 		m.put("active", rs.getString("active"));
 		list.add(m);// rs 행의수만큼 맵이 만들어지고 그것들이 리스트에 들어간다
-	}
+	} */
+	ArrayList<HashMap<String, Object>> empList = EmpDAO.selectempList(startRow, rowPerPage);
+	
 	// JDBC API 사용이 끝났다면 DB자원들을 반납
     empCntStmt.close();
     empCntRs.close();
                     
-    rs.close();
-    stmt.close();
                     
     conn.close();
 %>
@@ -156,7 +157,7 @@
 			<th>active</th>
 		</tr>
 		<%
-			for(HashMap<String, Object> m : list) {
+			for(HashMap<String, Object> m : empList) {
 		%>
 				<tr>
 					<td><%=(String)(m.get("empId"))%></td>

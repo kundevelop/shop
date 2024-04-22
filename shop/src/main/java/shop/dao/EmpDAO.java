@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // emp 테이블을 CRUD하는 static 메서드의 컨테이너
@@ -55,21 +56,36 @@ public class EmpDAO {
 	      return resultMap;
 	   }
 	   
-	   /*
-	   public static HashMap<String, Object> empList(int startRow, int rowPerPage) throws Exception {
-		   HashMap<String, Object> empList = null;
+	   
+	   
+	   //empList 
+	   public static ArrayList<HashMap<String, Object>> selectempList(int startRow, int rowPerPage) throws Exception {
+			ArrayList<HashMap<String, Object>> empList =
+					new ArrayList<HashMap<String, Object>>();
 		   
 		      // DB 접근
 		      Connection conn = DBHelper.getConnection(); 
 		      
 		      String sql = "select emp_id empId, emp_name empName, emp_job empJob, hire_date hireDate, active from emp order by hire_date desc limit ?, ?";
-			  	PreparedStatement stmt = conn.prepareStatement(sql);
-			  	ResultSet rs = stmt.executeQuery();
-				stmt.setInt(1, startRow);
-				stmt.setInt(2, rowPerPage);
+			  PreparedStatement stmt = conn.prepareStatement(sql);
+			  stmt.setInt(1, startRow);
+			  stmt.setInt(2, rowPerPage);
+			  ResultSet rs = stmt.executeQuery();
+			  
+				while(rs.next()) {
+					HashMap<String, Object> m = new HashMap<String, Object>();
+					m.put("empId", rs.getString("empId"));
+					m.put("empName", rs.getString("empName"));
+					m.put("empJob", rs.getString("empJob"));
+					m.put("hireDate", rs.getString("hireDate"));
+					m.put("active", rs.getString("active"));
+					empList.add(m);
+				}
+				conn.close();
+				return empList;
 		   
 	   }
-	   */
+	   
 	   
 	   
 	}

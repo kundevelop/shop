@@ -7,7 +7,7 @@
     
     session.invalidate(); //세션 공간 초기화(포멧)
     
-    System.out.println(session.getId() + "<---- session.invalidate()");
+    //System.out.println(session.getId() + "<---- session.invalidate()");
     
 	response.sendRedirect("/shop/customer/customerLoginForm.jsp");
 %>

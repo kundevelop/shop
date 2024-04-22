@@ -3,6 +3,7 @@ package shop.dao;
 import java.sql.*;
 import java.util.*;
 public class CustomerDAO {
+	
 	//회원 가입 중복 체크
 	public static boolean addCustomerIdCheck(String customerId) throws Exception{
 		Connection conn = DBHelper.getConnection();
@@ -10,7 +11,7 @@ public class CustomerDAO {
 		ResultSet rs= null;
 		
 		//아이디 중복확인 쿼리
-		String sql = "SELCET mail AS customerId FROM customer WHERE mail = ?";
+		String sql = "SELECT mail FROM customer WHERE mail = ? ";
 		stmt = conn.prepareStatement(sql);
 		stmt.setString(1, customerId);
 		rs = stmt.executeQuery();
@@ -20,6 +21,7 @@ public class CustomerDAO {
 		if(rs.next()) {
 			checkId = true;
 		}
+		
 		conn.close();
 		return checkId;
 	
@@ -27,14 +29,15 @@ public class CustomerDAO {
 	
 	
 	//회원가입 
-	public static int addCustomer(String customerId, String customerPw,String customerName,  String customerBirth,  String customerGender) 
+	public static int addCustomerId(String customerId, String customerPw,String customerName,  String customerBirth,  String customerGender) 
 			throws Exception{
 		Connection conn = DBHelper.getConnection();
 		PreparedStatement stmt2 = null;
-		/*"INSERT INTO customer(customer_id, customer_pw, customer_name, birth, gender, update_date, create_date)
+		int row = 0 ;
+		/*"INSERT INTO customer(mail, customer_pw, customer_name, birth, gender, update_date, create_date)
 		VALUES(?, ?, ?, ?, ? , now(), now())*/
 		
-		String sql = "INSERT INTO customer(mail, customer_pw, customer_name, birth, gender, update_date, create_date) VALUES(?, ?, ?, ?, ? , now(), now())";
+		String sql = "INSERT INTO customer(mail, customer_pw, customer_name, birth, gender, update_date, create_date) VALUES(?, ?, ?, ?, ?, NOW(), NOW());";
 		
 		stmt2 = conn.prepareStatement(sql);
 		stmt2.setString(1, customerId);
@@ -43,7 +46,7 @@ public class CustomerDAO {
 		stmt2.setString(4, customerBirth);
 		stmt2.setString(5, customerGender);	
 		
-		int row = 0 ;
+		
 		
 		row = stmt2.executeUpdate();
 		

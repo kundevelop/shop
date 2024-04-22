@@ -108,7 +108,7 @@
 	
 	<!-- 서브 메뉴 카테고리별 상품리스트 -->
 	<div>
-		<a href="/shop/emp/goodsTotalList.jsp">전체</a>
+		<a href="/shop/customer/goodsTList.jsp">전체</a>
 		<%
 			for(HashMap m : categoryList) {
 		%>

@@ -1,14 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import = "shop.dao.*" %>
 <%
-    //·Î±×ÀÎ ÀÎÁõ ºÐ±â : ¼¼¼Ç º¯¼ö ÀÌ¸§ - loginCustomer
+    //ë¡œê·¸ì¸ ì¸ì¦ ë¶„ê¸° : ì„¸ì…˜ ë³€ìˆ˜ ì´ë¦„ - loginCustomer
     
     if(session.getAttribute("loginCustomer") !=null) {
         response.sendRedirect("/shop/customer/goodsList.jsp");
         return;
     }
     
-    //¾Ö·¯¸Þ¼¼Áö ¹Þ¾Æ¿À±â
+    //ì• ëŸ¬ë©”ì„¸ì§€ ë°›ì•„ì˜¤ê¸°
     String errMsg = request.getParameter("errMsg");
     
     String checkUserId = null;
@@ -18,7 +19,7 @@
     System.out.println(checkId + "<---checkId");
     
     if(checkId == true) {
-    	checkUserId = "ÀÌ¹Ì ÀÖ´Â ¾ÆÀÌµð ÀÔ´Ï´Ù.";
+    	checkUserId = "ì´ë¯¸ ìžˆëŠ” ì•„ì´ë”” ìž…ë‹ˆë‹¤.";
     }
 
 %>    
@@ -26,24 +27,24 @@
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>Insert title here</title>
+<title>ê³ ê° íšŒì›ê°€ìž…</title>
 </head>
 <body>
-	<h1>È¸¿ø°¡ÀÔ</h1>
+	<h1>íšŒì›ê°€ìž…</h1>
 	
 	<form method = "post" action="/shop/customer/addCustomerAction.jsp">
 		<table>
 			<tr>
 			
 				<td>
-					<label for="cid">¾ÆÀÌµð</label>
+					<label for="cid">ì•„ì´ë””</label>
 					<input type="text" name = customerId id = cid>
 				</td>
 			</tr>
 			
 			<tr>
 				<td>
-					<label for="cpw">ºñ¹Ð¹øÈ£</label>
+					<label for="cpw">ë¹„ë°€ë²ˆí˜¸</label>
 					<input type="password" name = customerPw id = cpw>
 				</td>
 			
@@ -51,7 +52,7 @@
 			
 			<tr>
 				<td>
-					<label for="cname">ÀÌ¸§</label>
+					<label for="cname">ì´ë¦„</label>
 					<input type="text" name = customerName id = cname>
 				
 				</td>
@@ -60,7 +61,7 @@
 			
 			<tr>
 				<td>
-					<label for="cbirth">»ýÀÏ</label>
+					<label for="cbirth">ìƒì¼</label>
 					<input type="date" name = customerBirth id = cbirth>
 				</td>
 			
@@ -68,11 +69,11 @@
 			
 			<tr>
 				<td>
-					<label for="cgnder">¼ºº°</label>
+					<label for="cgnder">ì„±ë³„</label>
 					<select name="customerGender">
-						<option value="">¼ºº°À» ¼±ÅÃÇØÁÖ¼¼¿ä</option>
-						<option value="³²">³²</option>
-						<option value="¿©">¿©</option>
+						<option value="">ì„±ë³„ì„ ì„ íƒí•´ì£¼ì„¸ìš”</option>
+						<option value="ë‚¨">ë‚¨</option>
+						<option value="ì—¬">ì—¬</option>
 					</select>
 				</td>
 			
@@ -96,7 +97,7 @@
 			
 		</table>
 		
-		<button type = "submit">È¸¿ø°¡ÀÔ</button>
+		<button type = "submit">íšŒì›ê°€ìž…</button>
 		
 	</form>
 
