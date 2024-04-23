@@ -15,8 +15,7 @@
 %>
 
 <%
-	//DB연결(비빌번호 노출방지)
-	Connection conn = DBHelper.getConnection();
+	
 
 %>
 
@@ -27,5 +26,7 @@
 <title></title>
 </head>
 <body>
+
+	
 </body>
 </html>

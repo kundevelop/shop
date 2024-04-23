@@ -18,17 +18,16 @@
 
 <!-- model layer -->
 <%
-    //DB연결(비빌번호 노출방지)
-    Connection conn = DBHelper.getConnection();
-    
-    String sql = "SELECT *,(SELECT COUNT(*) FROM category) cnt FROM category "; //테이블이 나눠져 있어서 서브쿼리를 사용
+	/*
+	Connection conn = DBHelper.getConnection();
+	String sql = "SELECT *,(SELECT COUNT(*) FROM category) cnt FROM category "; //테이블이 나눠져 있어서 서브쿼리를 사용
 	PreparedStatement stmt = null;
 	ResultSet rs = null; 
-    stmt = conn.prepareStatement(sql);
-    rs = stmt.executeQuery();
-    
-    ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>();
-    
+	stmt = conn.prepareStatement(sql);
+	rs = stmt.executeQuery();
+	
+	ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>();
+	
 	int totalCount = 0;
 	
 	while(rs.next()){
@@ -41,7 +40,11 @@
 		list.put("createDate", rs.getString("create_date"));
 		list.put("cnt", rs.getString("cnt"));
 		categoryList.add(list);
-	}
+	}  */
+	
+	
+	ArrayList<HashMap<String, Object>> categoryList= EmpDAO.CntCategory();
+		
     
 %>
 
@@ -77,7 +80,7 @@
             <%
                 for(HashMap list : categoryList){
             %>  
-                <div >
+                <div>
                     <div>제목 :<%=(String)list.get("category")%></div>
                     <div>작성일 :<%=(String)list.get("createDate")%></div>
                     <div>
@@ -89,9 +92,10 @@
             <%
                 }
             %>
-            <div >
-                <div>전체 카테고리 합계 : <%=totalCount%></div>
+            <div>
+                
                 <div>
+                	
                     <a href="/shop/emp/addCategoryForm.jsp">카테고리 추가</a>
                 </div>
             </div>
