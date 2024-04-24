@@ -9,23 +9,23 @@ import java.util.HashMap;
 
 // emp 테이블을 CRUD하는 static 메서드의 컨테이너
 public class EmpDAO {
-	public static int insertEmp(String empId, String empPw, String empName, String empJob)
-			throws Exception {
-		int row = 0;
-	    // DB 접근
-		Connection conn = DBHelper.getConnection(); 
-	      
-	    String sql = "insert ... ?, ?, ?, ?";
-	    PreparedStatement stmt=conn.prepareStatement(sql);
-	    stmt.setString(1, empId);
-	    stmt.setString(2, empPw);
-	    stmt.setString(3, empName);
-	    stmt.setString(4, empJob);
-	    
-	    row = stmt.executeUpdate();
-	    
-	    conn.close();
-	    return row;
+		public static int insertEmp(String empId, String empPw, String empName, String empJob)
+				throws Exception {
+			int row = 0;
+		    // DB 접근
+			Connection conn = DBHelper.getConnection(); 
+		      
+		    String sql = "insert ... ?, ?, ?, ?";
+		    PreparedStatement stmt=conn.prepareStatement(sql);
+		    stmt.setString(1, empId);
+		    stmt.setString(2, empPw);
+		    stmt.setString(3, empName);
+		    stmt.setString(4, empJob);
+		    
+		    row = stmt.executeUpdate();
+		    
+		    conn.close();
+		    return row;
 		
 	}
 	
@@ -59,7 +59,8 @@ public class EmpDAO {
 	   
 	   
 	   //empList 
-	   public static ArrayList<HashMap<String, Object>> selectempList(int startRow, int rowPerPage) throws Exception {
+	   public static ArrayList<HashMap<String, Object>> selectempList(int startRow, int rowPerPage) 
+			   										throws Exception {
 			ArrayList<HashMap<String, Object>> empList =
 					new ArrayList<HashMap<String, Object>>();
 		   
@@ -86,54 +87,36 @@ public class EmpDAO {
 		   
 	   }
 	   
-	   //카테고리 리스트
-	   public static ArrayList<HashMap<String, Object>> CntCategory() throws Exception {
-		   ArrayList<HashMap<String, Object>> categoryList =
-				   new ArrayList<HashMap<String, Object>>();
+	   //modifyEmpActive
+	   public static int modifyEmpActive (String active, String empId) throws Exception {
 		   
 		    Connection conn = DBHelper.getConnection();
-		    String sql = "SELECT *,(SELECT COUNT(*) FROM category) cnt FROM category "; //테이블이 나눠져 있어서 서브쿼리를 사용
+		    String sql = "update emp set active = ? where emp_id = ?";
 			PreparedStatement stmt = null;
-			ResultSet rs = null; 
-		    stmt = conn.prepareStatement(sql);
-		    rs = stmt.executeQuery();
-		    
-			int totalCount = 0;
 			
-			while(rs.next()){
-				if(totalCount == 0){
-					totalCount = rs.getInt("cnt");
-				}
-				
-				HashMap<String, Object> list = new HashMap<String, Object>();
-				list.put("category", rs.getString("category"));
-				list.put("createDate", rs.getString("create_date"));
-				list.put("cnt", rs.getString("cnt"));
-				categoryList.add(list);
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, active);
+			stmt.setString(2, empId);
+			System.out.println(stmt);
+			int row = 0;
+			row = stmt.executeUpdate();
+			
+			if(row == 1){
+				//변경 성공
+				System.out.println("변경 성공");
+			} else {
+				//변경 실패
+				System.out.println("변경 실패");
 			}
 		   
-		 
-		   return categoryList;
+		   
+			conn.close();
+			return row;
+		   
 	   }
 	   
-	   //카테고리 삭제
-	   public static int DeleteCategory (String category, String createDate) throws Exception{
-			
-			//db 연결
-			Connection conn = DBHelper.getConnection();
-			PreparedStatement stmt = null;
-			
-			String sql= "DELETE FROM category WHERE category = ?";
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, category);
-			stmt.setString(2, createDate);
-			
-			int row = stmt.executeUpdate();
-			
-
-		   conn.close();
-		   return row;
-	   }
+	 
+	   
 	   		
 	   
 	}

@@ -36,7 +36,7 @@
 	//DB연결(비빌번호 노출방지)
     Connection conn = DBHelper.getConnection();
 	
-	// 카테고리 sql
+	// 카테고리 sql 
     ArrayList<HashMap<String, Object>> categoryList= GoodsDAO.selectCategoryList();
 	/*
     String sql = "select category, count(*) AS cnt from goods group by category order by category";

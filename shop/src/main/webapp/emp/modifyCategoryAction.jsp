@@ -16,24 +16,12 @@
 %>
 
 <%
-    //DB연결(비빌번호 노출방지)
-    Connection conn = DBHelper.getConnection();
-    
-    String sql = "UPDATE category SET category=? WHERE category=?";
-    PreparedStatement stmt = null;
-    ResultSet rs= null;
-    
-    stmt = conn.prepareStatement(sql);
-    stmt.setString(1, modifyCategory);
-    stmt.setString(2, category);
-    
-    int row = stmt.executeUpdate();
-    
-    //System.out.println(row);
+	//DAO 호출
+	int modifyCRows = CategoryDAO.modifyCategoryAction(modifyCategory, category);
 
     
     
-    if(row == 1) {
+    if(modifyCRows == 1) {
         System.out.println("카테고리 수정 완료");
 		response.sendRedirect("/shop/emp/categoryList.jsp");
     

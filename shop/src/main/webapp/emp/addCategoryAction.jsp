@@ -20,17 +20,11 @@
 
     System.out.println(categoryadd + "<----categoryadd");
     
+    //DAO 호출
+	int addCategoryRows = CategoryDAO.addCategoryAction(categoryadd);
+	
     
-    //DB연결(비빌번호 노출방지)
-    Connection conn = DBHelper.getConnection();
-	PreparedStatement stmt = null;
-
-    String sql= "INSERT INTO category(category, create_date) VALUES(?,NOW())";
-    stmt = conn. prepareStatement(sql);
-    stmt.setString(1, categoryadd);
-    
-    int row = stmt.executeUpdate();
-	if(row == 1) {
+	if(addCategoryRows == 1) {
         
 		System.out.println("입력성공");
 		response.sendRedirect("/shop/emp/categoryList.jsp");

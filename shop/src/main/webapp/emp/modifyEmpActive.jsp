@@ -21,25 +21,7 @@
 		active = "ON";
 	}
 	
-	String sql = null;
-	sql = "update emp set active = ? where emp_id = ?";
-    //DB연결(비빌번호 노출방지)
-    Connection conn = DBHelper.getConnection();
-	PreparedStatement stmt = null;
-	stmt = conn.prepareStatement(sql);
-	stmt.setString(1, active);
-	stmt.setString(2, empId);
-	System.out.println(stmt);
-	int row = 0;
-	row = stmt.executeUpdate();
-	
-	if(row == 1){
-		//변경 성공
-		System.out.println("변경 성공");
-	} else {
-		//변경 실패
-		System.out.println("변경 실패");
-	}
+	int modifyRows = EmpDAO.modifyEmpActive(active,empId);
 	
 	response.sendRedirect("/shop/emp/empList.jsp");
 %>

@@ -18,7 +18,7 @@
 	String createDate= request.getParameter("createDate");
 	
 	// DAO 호출 
-	int deletedRows = EmpDAO.DeleteCategory(category, createDate);
+	int deletedRows = CategoryDAO.deleteCategory(category, createDate);
 	
 	//System.out.println(deletedRows + "<--deletedRows");
 	

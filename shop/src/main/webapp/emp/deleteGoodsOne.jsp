@@ -14,6 +14,7 @@
 
 <%
     int goodsNo = Integer.parseInt(request.getParameter("goodsNo"));
+	
     //DB연결(비빌번호 노출방지)
     Connection conn = DBHelper.getConnection();
     PreparedStatement stmt = null;
@@ -24,6 +25,10 @@
     stmt.setInt(1, goodsNo);
     
     int row = stmt.executeUpdate();
+    
+    
+    //int goodsRows = GoodsDAO.deleteGoodsList(goodsNo);
+    
     
     if(row == 1) {
         System.out.println("삭제성공");

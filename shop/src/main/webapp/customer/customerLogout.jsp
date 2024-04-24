@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
     
 <%
 		
-	//session.removeAttribute("loginMember"); ´Ù¸¥ Á¤º¸°¡ µé¾î°¥¼öÀÖÀ½
+	//session.removeAttribute("loginMember"); ë‹¤ë¥¸ ì •ë³´ê°€ ë“¤ì–´ê°ˆìˆ˜ìžˆìŒ
     
-    session.invalidate(); //¼¼¼Ç °ø°£ ÃÊ±âÈ­(Æ÷¸ä)
+    session.invalidate(); //ì„¸ì…˜ ê³µê°„ ì´ˆê¸°í™”(í¬ë©§)
     
     //System.out.println(session.getId() + "<---- session.invalidate()");
     

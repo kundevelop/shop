@@ -18,32 +18,8 @@
 
 <!-- model layer -->
 <%
-	/*
-	Connection conn = DBHelper.getConnection();
-	String sql = "SELECT *,(SELECT COUNT(*) FROM category) cnt FROM category "; //테이블이 나눠져 있어서 서브쿼리를 사용
-	PreparedStatement stmt = null;
-	ResultSet rs = null; 
-	stmt = conn.prepareStatement(sql);
-	rs = stmt.executeQuery();
-	
-	ArrayList<HashMap<String, Object>> categoryList = new ArrayList<HashMap<String, Object>>();
-	
-	int totalCount = 0;
-	
-	while(rs.next()){
-		if(totalCount == 0){
-			totalCount = rs.getInt("cnt");
-		}
-		
-		HashMap<String, Object> list = new HashMap<String, Object>();
-		list.put("category", rs.getString("category"));
-		list.put("createDate", rs.getString("create_date"));
-		list.put("cnt", rs.getString("cnt"));
-		categoryList.add(list);
-	}  */
-	
-	
-	ArrayList<HashMap<String, Object>> categoryList= EmpDAO.CntCategory();
+	//DAO 호출
+	ArrayList<HashMap<String, Object>> categoryList= CategoryDAO.CntCategory();
 		
     
 %>

@@ -80,6 +80,7 @@
 	System.out.println(stmt);
 	
 	int row = stmt.executeUpdate();
+	
 	if(row == 1) {
     	 //insert 성공하면 파일 업로드
         //part => 1)is => 2)os => 3)빈파일
