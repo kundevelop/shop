@@ -8,25 +8,25 @@
         response.sendRedirect("/shop/customer/goodsList.jsp");
         return;
     }
-    
-    //애러메세지 받아오기
-    String errMsg = request.getParameter("errMsg");
-    
-    String checkUserId = null;
-    
-    boolean checkId = Boolean.parseBoolean(request.getParameter("checkId"));
-    
-    System.out.println(checkId + "<---checkId");
-    
-    if(checkId == true) {
-    	checkUserId = "이미 있는 아이디 입니다.";
-    }
+	//애러메세지 받아오기
+	String errMsg = request.getParameter("errMsg");
+	
+	String checkUserId = null;
+	
+	boolean checkId = Boolean.parseBoolean(request.getParameter("checkId"));
+	
+	System.out.println(checkId + "<---checkId");
+	
+	if(checkId == true) {
+		checkUserId = "이미 있는 아이디 입니다.";
+	}   
 
-%>    
+
+%>   
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>고객 회원가입</title>
 </head>
 <body>

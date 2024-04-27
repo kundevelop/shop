@@ -35,13 +35,29 @@
 
 
 <%	
+	
 	boolean checkId = CustomerDAO.addCustomerIdCheck(customerId);
-	if(checkId == true){
+	System.out.println(checkId + "<---checkId");
+	
+
+	if(checkId == true){ //true면 아이디가 중복된것이기 때문에 회원가입 Form 으로 
 		
 		response.sendRedirect("/shop/customer/addCustomerForm.jsp?checkId="+checkId);
 		
+	} else {
+		int row = CustomerDAO.addCustomerId(customerId, customerPw, customerName, customerBirth, customerGender);
+		if(row>0) {
+			response.sendRedirect("/shop/customer/customerLoginForm.jsp");
+		} else {
+			response.sendRedirect("/shop/customer/addCustomerForm.jsp");
+		}
+		
+		
 	}
+	
+	//sendRediraect 로 넘어가도 밑에 분기문은 동작함 그래서 else 문안에 입력하였음
 
+	/*
 	int row = CustomerDAO.addCustomerId(customerId, customerPw, customerName, customerBirth, customerGender);
 	
 	if(row>0) {
@@ -49,6 +65,6 @@
 	} else {
 		response.sendRedirect("/shop/customer/addCustomerForm.jsp");
 	}
-	
+	*/
 
 %>    

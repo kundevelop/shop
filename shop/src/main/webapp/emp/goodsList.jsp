@@ -202,7 +202,7 @@
                 </div>
                 <div>
                     <a href = "">수정</a>
-                    <a href = "deleteGoodsOne.jsp?goodsNo=<%=(Integer)(m2.get("goodsNo"))%>">삭제</a>
+                    <a href = "deleteGoodsAction.jsp?goodsNo=<%=(Integer)(m2.get("goodsNo"))%>">삭제</a>
                     
                 </div>
 			</div>		
