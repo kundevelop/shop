@@ -141,8 +141,8 @@
         }
         
           #imgDiv {
-            max-width: 50%;
-            max-height: 50%;
+            width: 230px;
+            height: 220px;
         } 
         
     </style>
